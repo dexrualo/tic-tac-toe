@@ -7,12 +7,17 @@ class App extends Component {
     super();
     this.state = {
       squares: Array(9).fill(null),
+      vsCpu: false,
+      xIsNext: true
     };
   }
   handleClick(i) {
     const squares = this.state.squares.slice();
-    squares[i] = 'X';
-    this.setState({squares: squares});
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    this.setState({
+      squares: squares,
+      xIsNext: !this.state.xIsNext
+    });
   }
   render() {
     return (
@@ -35,7 +40,7 @@ class App extends Component {
 
 function Square (props) {
   return (
-    <div className='square' onClick={() => props.onClick()}>{props.value}</div>
+    <button className='square' onClick={() => props.onClick()}>{props.value}</button>
   );
 }
 
