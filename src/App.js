@@ -13,6 +13,8 @@ class App extends Component {
   }
   handleClick(i) {
     const squares = this.state.squares.slice();
+    if (squares[i])
+      return;
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
       squares: squares,
@@ -58,6 +60,19 @@ class Board extends Component {
         <Square value={squares[6]} onClick={() => this.props.onClick(6)} />
         <Square value={squares[7]} onClick={() => this.props.onClick(7)} />
         <Square value={squares[8]} onClick={() => this.props.onClick(8)} />
+      </div>
+    );
+  }
+}
+
+class startPrompt extends Component {
+  render() {
+    return (
+      <div className='start'>
+        <h2>Tic Tac Toe</h2>
+        <p>Please choose the number of players to start the game.</p>
+        <button>1 player</button>
+        <button>2 players</button>
       </div>
     );
   }
