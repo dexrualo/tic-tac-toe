@@ -7,9 +7,25 @@ class App extends Component {
     super();
     this.state = {
       squares: Array(9).fill(null),
+      gameStarted: false,
+      symbolChosen: false,
       vsCpu: false,
-      xIsNext: true
+      xIsNext: true,
+      p1Symbol: 'X'
     };
+  }
+  startGame(vsCpu) {
+    this.setState({
+      gameStarted: true,
+      vsCpu: vsCpu
+    });
+  }
+  setSymbol (p1Symbol) {
+    this.setState({
+      p1Symbol: p1Symbol,
+      xIsNext: (p1Symbol === 'X'),
+      symbolChosen: true
+    });
   }
   handleClick(i) {
     const squares = this.state.squares.slice();
@@ -22,21 +38,27 @@ class App extends Component {
     });
   }
   render() {
-    return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+    if (this.state.gameStarted && this.state.symbolChosen) {
+      return (
+          <div className="App">
+          <div className="App-header">
+            <img src={logo} className="App-logo" alt="logo" />
+            <h2>Welcome to React</h2>
+          </div>
+          <p className="App-intro">
+            To get started, edit <code>src/App.js</code> and save to reload.
+          </p>
+          <Board 
+            squares={this.state.squares}
+            onClick={(i) => this.handleClick(i)}
+          />
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <Board 
-          squares={this.state.squares}
-          onClick={(i) => this.handleClick(i)}
-        />
-      </div>
-    );
+      );
+    } else if (this.state.gameStarted && !this.state.symbolChosen) {
+      return <ChooseSymbol onClick={(s) => this.setSymbol(s)}/>;
+    } else {
+      return <ChoosePlayers onClick={(b) => this.startGame(b)}/>;
+    }
   }
 }
 
@@ -49,30 +71,36 @@ function Square (props) {
 class Board extends Component {
   render() {
     const squares = this.props.squares;
+    const boardSquares = squares.map((item,i) => 
+      <Square value={squares[i]} onClick={() => this.props.onClick(i)} />
+    );
     return (
       <div className='board'>
-        <Square value={squares[0]} onClick={() => this.props.onClick(0)} />
-        <Square value={squares[1]} onClick={() => this.props.onClick(1)} />
-        <Square value={squares[2]} onClick={() => this.props.onClick(2)} />
-        <Square value={squares[3]} onClick={() => this.props.onClick(3)} />
-        <Square value={squares[4]} onClick={() => this.props.onClick(4)} />
-        <Square value={squares[5]} onClick={() => this.props.onClick(5)} />
-        <Square value={squares[6]} onClick={() => this.props.onClick(6)} />
-        <Square value={squares[7]} onClick={() => this.props.onClick(7)} />
-        <Square value={squares[8]} onClick={() => this.props.onClick(8)} />
+        {boardSquares}
       </div>
     );
   }
 }
 
-class startPrompt extends Component {
+class ChoosePlayers extends Component {
   render() {
     return (
-      <div className='start'>
-        <h2>Tic Tac Toe</h2>
+      <div>
         <p>Please choose the number of players to start the game.</p>
-        <button>1 player</button>
-        <button>2 players</button>
+        <button onClick={() => this.props.onClick()}>1 player</button>
+        <button onClick={() => this.props.onClick()}>2 players</button>
+      </div>
+    );
+  }
+}
+
+class ChooseSymbol extends Component {
+  render() {
+    return (
+      <div>
+        <p>Please choose your preferred symbol.</p>
+        <button onClick={() => this.props.onClick()}>X</button>
+        <button onClick={() => this.props.onClick()}>O</button>
       </div>
     );
   }
