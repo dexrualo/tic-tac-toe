@@ -72,7 +72,7 @@ class Board extends Component {
   render() {
     const squares = this.props.squares;
     const boardSquares = squares.map((item,i) => 
-      <Square value={squares[i]} onClick={() => this.props.onClick(i)} />
+      <Square key={i} value={squares[i]} onClick={() => this.props.onClick(i)} />
     );
     return (
       <div className='board'>
