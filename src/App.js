@@ -96,42 +96,36 @@ function Square (props) {
   );
 }
 
-class Board extends Component {
-  render() {
-    const squares = this.props.squares;
-    const boardSquares = squares.map((item,i) => 
-      <Square key={i} value={squares[i]} onClick={() => this.props.onClick(i)} />
-    );
-    return (
-      <div className='board'>
-        {boardSquares}
-      </div>
-    );
-  }
+function Board (props) {
+  const squares = props.squares;
+  const boardSquares = squares.map((item,i) => 
+    <Square key={i} value={squares[i]} onClick={() => props.onClick(i)} />
+  );
+  return (
+    <div className='board'>
+      {boardSquares}
+    </div>
+  );
 }
 
-class ChoosePlayers extends Component {
-  render() {
-    return (
-      <div>
-        <p>Please choose the number of players to start the game.</p>
-        <button onClick={() => this.props.onClick(true)}>1 player</button>
-        <button onClick={() => this.props.onClick(false)}>2 players</button>
-      </div>
-    );
-  }
+function ChoosePlayers (props) {
+  return (
+    <div>
+      <p>Please choose the number of players to start the game.</p>
+      <button onClick={() => props.onClick(true)}>1 player</button>
+      <button onClick={() => props.onClick(false)}>2 players</button>
+    </div>
+  );
 }
 
-class ChooseSymbol extends Component {
-  render() {
-    return (
-      <div>
-        <p>Please choose your preferred symbol.</p>
-        <button onClick={() => this.props.onClick('X')}>X</button>
-        <button onClick={() => this.props.onClick('O')}>O</button>
-      </div>
-    );
-  }
+function ChooseSymbol (props) {
+  return (
+    <div>
+      <p>Please choose your preferred symbol.</p>
+      <button onClick={() => props.onClick('X')}>X</button>
+      <button onClick={() => props.onClick('O')}>O</button>
+    </div>
+  );
 }
 
 export default App;
