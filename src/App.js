@@ -10,31 +10,36 @@ class App extends Component {
       gameStarted: false,
       symbolChosen: false,
       vsCpu: false,
-      xIsNext: true,
-      p1Symbol: 'X'
+      p1IsNext: true,
+      p1Symbol: 'X',
+      p2Symbol: 'O'
     };
   }
   startGame(vsCpu) {
     this.setState({
       gameStarted: true,
-      vsCpu: vsCpu
+      vsCpu: vsCpu,
     });
   }
-  setSymbol (p1Symbol) {
+  setSymbol (choice) {
+    var p2 = choice === 'X' ? 'O' : 'X';
     this.setState({
-      p1Symbol: p1Symbol,
-      xIsNext: (p1Symbol === 'X'),
-      symbolChosen: true
+      p1Symbol: choice,
+      p2Symbol: p2,
+      symbolChosen: true,
     });
   }
+  
   handleClick(i) {
+    if (this.state.vsCpu && !this.state.p1IsNext)
+      return;
     const squares = this.state.squares.slice();
     if (squares[i])
       return;
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    squares[i] = this.state.p1IsNext ? this.state.p1Symbol : this.state.p2Symbol;
     this.setState({
       squares: squares,
-      xIsNext: !this.state.xIsNext
+      p1IsNext: !this.state.p1IsNext,
     });
   }
   render() {
@@ -64,7 +69,11 @@ class App extends Component {
 
 function Square (props) {
   return (
-    <button className='square' onClick={() => props.onClick()}>{props.value}</button>
+    <button
+      className='square'
+      onClick={() => props.onClick()}>
+      {props.value}
+    </button>
   );
 }
 
@@ -87,8 +96,8 @@ class ChoosePlayers extends Component {
     return (
       <div>
         <p>Please choose the number of players to start the game.</p>
-        <button onClick={() => this.props.onClick()}>1 player</button>
-        <button onClick={() => this.props.onClick()}>2 players</button>
+        <button onClick={() => this.props.onClick(true)}>1 player</button>
+        <button onClick={() => this.props.onClick(false)}>2 players</button>
       </div>
     );
   }
@@ -99,8 +108,8 @@ class ChooseSymbol extends Component {
     return (
       <div>
         <p>Please choose your preferred symbol.</p>
-        <button onClick={() => this.props.onClick()}>X</button>
-        <button onClick={() => this.props.onClick()}>O</button>
+        <button onClick={() => this.props.onClick('X')}>X</button>
+        <button onClick={() => this.props.onClick('O')}>O</button>
       </div>
     );
   }
