@@ -15,12 +15,14 @@ class App extends Component {
       p2Symbol: 'O'
     };
   }
+
   startGame(vsCpu) {
     this.setState({
       gameStarted: true,
       vsCpu: vsCpu,
     });
   }
+
   setSymbol (choice) {
     var p2 = choice === 'X' ? 'O' : 'X';
     this.setState({
@@ -42,6 +44,23 @@ class App extends Component {
       p1IsNext: !this.state.p1IsNext,
     });
   }
+
+  componentDidUpdate () {
+    if (this.state.vsCpu && !this.state.p1IsNext) {
+      const squares = this.state.squares.slice();
+      for (var i = 0; i < 9; i++) {
+        if (squares[i] === null) {
+          squares[i] = this.state.p2Symbol;
+          this.setState({
+            squares: squares,
+            p1IsNext: !this.state.p1IsNext,
+          });
+          return;
+        }
+      }
+    }
+  }
+
   render() {
     if (this.state.gameStarted && this.state.symbolChosen) {
       return (
