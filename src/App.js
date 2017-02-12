@@ -12,7 +12,8 @@ class App extends Component {
       vsCpu: false,
       p1IsNext: true,
       p1Symbol: 'X',
-      p2Symbol: 'O'
+      p2Symbol: 'O',
+      gameEnded: false
     };
   }
 
@@ -33,7 +34,7 @@ class App extends Component {
   }
   
   handleClick(i) {
-    if (this.state.vsCpu && !this.state.p1IsNext)
+    if ((this.state.vsCpu && !this.state.p1IsNext) || this.state.gameEnded)
       return;
     const squares = this.state.squares.slice();
     if (squares[i])
@@ -46,8 +47,18 @@ class App extends Component {
   }
 
   componentDidUpdate () {
+    const squares = this.state.squares.slice();
+    if (!this.state.gameEnded) {
+      const winner = checkForWinner(squares);
+      if (winner){
+        console.log(winner);
+        this.setState({
+          gameEnded: true
+        });
+        return;
+      }
+    }
     if (this.state.vsCpu && !this.state.p1IsNext) {
-      const squares = this.state.squares.slice();
       for (var i = 0; i < 9; i++) {
         if (squares[i] === null) {
           squares[i] = this.state.p2Symbol;
@@ -62,28 +73,34 @@ class App extends Component {
   }
 
   render() {
+    var componentToRender;
     if (this.state.gameStarted && this.state.symbolChosen) {
-      return (
-          <div className="App">
-          <div className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <h2>Welcome to React</h2>
-          </div>
-          <p className="App-intro">
-            To get started, edit <code>src/App.js</code> and save to reload.
-          </p>
+      componentToRender = (
+        <div>
+          <TurnPrompt vsCpu={this.state.vsCpu} p1IsNext={this.state.p1IsNext} />
           <Board 
             squares={this.state.squares}
-            onClick={(i) => this.handleClick(i)}
-          />
+            onClick={(i) => this.handleClick(i)} />
         </div>
       );
     } else if (this.state.gameStarted && !this.state.symbolChosen) {
-      return <ChooseSymbol onClick={(s) => this.setSymbol(s)}/>;
+      componentToRender = <ChooseSymbol onClick={(s) => this.setSymbol(s)}/>;
     } else {
-      return <ChoosePlayers onClick={(b) => this.startGame(b)}/>;
+      componentToRender = <ChoosePlayers onClick={(b) => this.startGame(b)}/>;
     }
-  }
+    return (
+      <div className="App">
+        <div className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h2>Welcome to React</h2>
+        </div>
+        <p className="App-intro">
+          To get started, edit <code>src/App.js</code> and save to reload.
+        </p>
+        {componentToRender}
+      </div>
+    );
+  } 
 }
 
 function Square (props) {
@@ -126,6 +143,45 @@ function ChooseSymbol (props) {
       <button onClick={() => props.onClick('O')}>O</button>
     </div>
   );
+}
+
+function TurnPrompt (props) {
+  var turnString = '';
+  if (props.vsCpu)
+    if (props.p1IsNext)
+      turnString = <p>It&apos;s your turn.</p>;
+    else
+      turnString = <p>Computer&apos;s turn</p>;
+  else
+    if (props.p1IsNext)
+      turnString = <p>Player one&apos;s turn.</p>;
+    else
+      turnString = <p>Player two&apos;s turn</p>;
+  return (
+    <div>
+      {turnString}
+    </div>
+  );
+}
+
+function checkForWinner (squares) {
+  const winningCombos = [
+    [0,1,2],
+    [3,4,5],
+    [6,7,8],
+    [0,3,6],
+    [1,4,7],
+    [2,5,8],
+    [0,4,8],
+    [2,4,6]
+  ];
+  const win = winningCombos.find(function(combo){
+    const i1 = combo[0];
+    const i2 = combo[1];
+    const i3 = combo[2];
+    return (squares[i1] && squares[i1] === squares[i2]  && squares[i1] === squares[i3]);
+  });
+  return win ? squares[win[0]] : win;
 }
 
 export default App;
