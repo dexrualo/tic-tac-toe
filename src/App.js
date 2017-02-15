@@ -13,7 +13,8 @@ class App extends Component {
       p1IsNext: true,
       p1Symbol: 'X',
       p2Symbol: 'O',
-      gameEnded: false
+      gameEnded: false,
+      winner: ''
     };
   }
 
@@ -53,12 +54,13 @@ class App extends Component {
       if (winner){
         console.log(winner);
         this.setState({
-          gameEnded: true
+          gameEnded: true,
+          winner: winner
         });
         return;
       }
     }
-    if (this.state.vsCpu && !this.state.p1IsNext) {
+    if (this.state.vsCpu && !this.state.p1IsNext && !this.state.gameEnded) {
       for (var i = 0; i < 9; i++) {
         if (squares[i] === null) {
           squares[i] = this.state.p2Symbol;
@@ -73,11 +75,16 @@ class App extends Component {
   }
 
   render() {
+    var prompt;
     var componentToRender;
+    if (this.state.gameEnded)
+      prompt = <WinPrompt vsCpu={this.state.vsCpu} p1Symbol={this.state.p1Symbol} winner={this.state.winner}/>;
+    else
+      prompt = <TurnPrompt vsCpu={this.state.vsCpu} p1IsNext={this.state.p1IsNext}/>
     if (this.state.gameStarted && this.state.symbolChosen) {
       componentToRender = (
         <div>
-          <TurnPrompt vsCpu={this.state.vsCpu} p1IsNext={this.state.p1IsNext} />
+          {prompt}
           <Board 
             squares={this.state.squares}
             onClick={(i) => this.handleClick(i)} />
@@ -160,6 +167,25 @@ function TurnPrompt (props) {
   return (
     <div>
       {turnString}
+    </div>
+  );
+}
+
+function WinPrompt (props) {
+  var winString = '';
+  if (props.vsCpu)
+    if (props.winner === props.p1Symbol)
+      winString = <p>Player One wins!</p>;
+    else
+      winString = <p>Computer wins!</p>;
+  else
+    if (props.winner === props.p1Symbol)
+      winString = <p>Player one wins!</p>;
+    else
+      winString = <p>Player two wins!</p>;
+  return (
+    <div>
+      {winString}
     </div>
   );
 }
