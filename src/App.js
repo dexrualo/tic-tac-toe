@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
@@ -31,6 +30,20 @@ class App extends Component {
       p1Symbol: choice,
       p2Symbol: p2,
       symbolChosen: true,
+    });
+  }
+
+  resetGame () {
+    this.setState({
+      squares: Array(9).fill(null),
+      gameStarted: false,
+      symbolChosen: false,
+      vsCpu: false,
+      p1IsNext: true,
+      p1Symbol: 'X',
+      p2Symbol: 'O',
+      gameEnded: false,
+      winner: ''
     });
   }
   
@@ -78,7 +91,7 @@ class App extends Component {
     var prompt;
     var componentToRender;
     if (this.state.gameEnded)
-      prompt = <WinPrompt vsCpu={this.state.vsCpu} p1Symbol={this.state.p1Symbol} winner={this.state.winner}/>;
+      prompt = <WinPrompt vsCpu={this.state.vsCpu} p1Symbol={this.state.p1Symbol} winner={this.state.winner} onClick={() => this.resetGame()}/>;
     else
       prompt = <TurnPrompt vsCpu={this.state.vsCpu} p1IsNext={this.state.p1IsNext}/>
     if (this.state.gameStarted && this.state.symbolChosen) {
@@ -98,12 +111,8 @@ class App extends Component {
     return (
       <div className="App">
         <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+          <h2>Tic Tac Toe</h2>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
         {componentToRender}
       </div>
     );
@@ -165,7 +174,7 @@ function TurnPrompt (props) {
     else
       turnString = <p>Player two&apos;s turn</p>;
   return (
-    <div>
+    <div className='prompt'>
       {turnString}
     </div>
   );
@@ -184,8 +193,9 @@ function WinPrompt (props) {
     else
       winString = <p>Player two wins!</p>;
   return (
-    <div>
+    <div className='prompt'>
       {winString}
+      <button onClick={() => props.onClick()}>Reset</button>
     </div>
   );
 }
